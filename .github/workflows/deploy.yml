@@ -4,12 +4,21 @@ on:
   push:
     branches: [ main ]
 
+# GitHub token permissions used by the workflow. We need write access to
+# contents and pages so the runner can push the `gh-pages` branch.
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -22,8 +31,27 @@ jobs:
       - name: Build web
         run: flutter build web --release
 
-      - name: Deploy to GitHub Pages
+      # if the dedicated gh-pages action fails due to token issues, we
+      # can push directly using git and a PAT. configure the remote so the
+      # correct token is used. the same secret variable is applied to both
+      # the action and the manual push.
+      - name: Configure git for deployment
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # embed token in remote URL to authenticate pushes explicitly
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAGES_PAT || secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+      - name: Push to gh-pages branch manually
+        run: |
+          git checkout --orphan gh-pages
+          git --work-tree=build/web add --all
+          git --work-tree=build/web commit -m "Deploy via action from ${{ github.sha }}"
+          git push origin gh-pages --force
+
+      # fallback with peaceiris action (keep it in case manual push doesn't suit)
+      - name: (optional) Deploy using action
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_PAGES_PAT || secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web

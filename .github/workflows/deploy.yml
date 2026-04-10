@@ -29,7 +29,7 @@ jobs:
         run: flutter pub get
 
       - name: Build web
-        run: flutter build web --release
+        run: flutter build web --release --base-href /test/
 
       # if the dedicated gh-pages action fails due to token issues, we
       # can push directly using git and a PAT. configure the remote so the

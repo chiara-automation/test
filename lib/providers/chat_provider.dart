@@ -33,6 +33,10 @@ class ChatProvider extends ChangeNotifier {
   }
 
   String _currentDraft = '';
+  set currentDraft(String value) {
+    _currentDraft = value;
+    notifyListeners();
+  }
 
   Future<void> sendMessage(String text) async {
     if (text.trim().isEmpty) return;
@@ -136,19 +140,19 @@ class ChatProvider extends ChangeNotifier {
     await _speechService.stopListening();
     _isListening = false;
     
-    // Get the recognized text and send as message
-    final text = _speechService.recognizedText.trim();
-    if (text.isNotEmpty) {
-      await sendMessage(text);
-    }
+    // Set the recognized text as draft for editing
+    _currentDraft = _speechService.recognizedText.trim();
+    notifyListeners();
+  }
 
+  Future<void> sendDraft() async {
+    if (_currentDraft.trim().isEmpty) return;
+    await sendMessage(_currentDraft.trim());
     _currentDraft = '';
     notifyListeners();
   }
 
-  void cancelListening() {
-    _speechService.cancelListening();
-    _isListening = false;
+  void clearDraft() {
     _currentDraft = '';
     notifyListeners();
   }

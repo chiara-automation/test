@@ -176,7 +176,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Consumer<ChatProvider>(
               builder: (context, chatProvider, child) {
                 final draft = chatProvider.currentDraft;
-                if (chatProvider.isListening && draft.isNotEmpty && _messageController.text != draft) {
+                if (_messageController.text != draft) {
                   _messageController.value = TextEditingValue(
                     text: draft,
                     selection: TextSelection.collapsed(offset: draft.length),
@@ -198,6 +198,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     filled: true,
                     fillColor: Colors.white,
                   ),
+                  onChanged: (value) {
+                    context.read<ChatProvider>().currentDraft = value;
+                  },
                   onSubmitted: (value) {
                     _sendMessage();
                   },
@@ -237,11 +240,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _sendMessage() {
-    final text = _messageController.text.trim();
-    if (text.isNotEmpty) {
-      context.read<ChatProvider>().sendMessage(text);
-      _messageController.clear();
-    }
+    context.read<ChatProvider>().sendDraft();
+    _messageController.clear();
   }
 
   String _formatTime(DateTime dateTime) {

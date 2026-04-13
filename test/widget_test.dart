@@ -11,7 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:english_bot/main.dart';
 
 void main() {
-  testWidgets('Chat app loads with welcome message', (WidgetTester tester) async {
+  testWidgets('Chat app loads with welcome message',
+      (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const EnglishBotApp());
 

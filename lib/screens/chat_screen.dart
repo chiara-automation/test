@@ -69,7 +69,8 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: Consumer<ChatProvider>(
               builder: (context, chatProvider, child) {
-                WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+                WidgetsBinding.instance
+                    .addPostFrameCallback((_) => _scrollToBottom());
                 return ListView.builder(
                   controller: _scrollController,
                   padding: const EdgeInsets.all(16),
@@ -100,9 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: message.isUser
-              ? Colors.blue[500]
-              : Colors.grey[300],
+          color: message.isUser ? Colors.blue[500] : Colors.grey[300],
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -144,7 +143,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildAudioButton(BuildContext context, dynamic message, int index) {
     final isPlaying = context.watch<ChatProvider>().playingIndex == index;
-    
+
     return GestureDetector(
       onTap: () {
         if (isPlaying) {
@@ -220,7 +219,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   }
                 },
                 mini: true,
-                backgroundColor: chatProvider.isListening ? Colors.red : Colors.blue,
+                backgroundColor:
+                    chatProvider.isListening ? Colors.red : Colors.blue,
                 child: Icon(
                   chatProvider.isListening ? Icons.mic : Icons.mic_none,
                   color: Colors.white,

@@ -25,7 +25,8 @@ class ChatProvider extends ChangeNotifier {
     // Welcome message from bot
     _messages.add(
       Message(
-        text: 'Hello! 👋 I\'m your English learning bot. Feel free to chat with me in English or ask me any grammar questions!',
+        text:
+            'Hello! 👋 I\'m your English learning bot. Feel free to chat with me in English or ask me any grammar questions!',
         isUser: false,
         timestamp: DateTime.now(),
       ),
@@ -57,7 +58,8 @@ class ChatProvider extends ChangeNotifier {
       final conversation = <Map<String, String>>[];
       for (final m in _messages) {
         // Skip the latest user message we just added when building previous history
-        if (m.timestamp.isAtSameMomentAs(_messages.last.timestamp) && m.isUser) {
+        if (m.timestamp.isAtSameMomentAs(_messages.last.timestamp) &&
+            m.isUser) {
           // this is the latest user message, will be sent as the current message
           continue;
         }
@@ -68,7 +70,8 @@ class ChatProvider extends ChangeNotifier {
       }
 
       // Get bot response using conversation context
-      final response = await _botService.getBotResponse(text, conversation: conversation);
+      final response =
+          await _botService.getBotResponse(text, conversation: conversation);
 
       _messages.add(
         Message(
@@ -96,7 +99,7 @@ class ChatProvider extends ChangeNotifier {
 
   Future<void> speak(int messageIndex) async {
     if (messageIndex < 0 || messageIndex >= _messages.length) return;
-    
+
     final message = _messages[messageIndex];
     if (message.isUser) return; // Don't speak user messages
 
@@ -139,7 +142,7 @@ class ChatProvider extends ChangeNotifier {
   Future<void> stopListening() async {
     await _speechService.stopListening();
     _isListening = false;
-    
+
     // Set the recognized text as draft for editing
     _currentDraft = _speechService.recognizedText.trim();
     notifyListeners();

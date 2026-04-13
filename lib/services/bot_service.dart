@@ -15,11 +15,13 @@ class BotService {
     }
   }
 
-  Future<String> getBotResponse(String userMessage, {List<Map<String, String>>? conversation}) async {
+  Future<String> getBotResponse(String userMessage,
+      {List<Map<String, String>>? conversation}) async {
     final apiKey = _openAiKey;
     if (apiKey != null && apiKey.isNotEmpty) {
       try {
-        return await _callOpenAi(apiKey, userMessage, conversation: conversation);
+        return await _callOpenAi(apiKey, userMessage,
+            conversation: conversation);
       } catch (e) {
         print('OpenAI call failed: $e');
         // Fall back to mock if OpenAI fails
@@ -31,14 +33,16 @@ class BotService {
     return _generateMockResponse(userMessage);
   }
 
-  Future<String> _callOpenAi(String apiKey, String userMessage, {List<Map<String, String>>? conversation}) async {
+  Future<String> _callOpenAi(String apiKey, String userMessage,
+      {List<Map<String, String>>? conversation}) async {
     final url = Uri.parse('https://api.openai.com/v1/chat/completions');
 
     final messages = <Map<String, String>>[];
     // Add system prompt
     messages.add({
       'role': 'system',
-      'content': 'You are an English tutor. Reply in clear, helpful English and help the user practice conversation. Keep responses concise.'
+      'content':
+          'You are an English tutor. Reply in clear, helpful English and help the user practice conversation. Keep responses concise.'
     });
 
     if (conversation != null && conversation.isNotEmpty) {
@@ -55,14 +59,16 @@ class BotService {
       'max_tokens': 300,
     });
 
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $apiKey',
-      },
-      body: body,
-    ).timeout(const Duration(seconds: 20));
+    final response = await http
+        .post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $apiKey',
+          },
+          body: body,
+        )
+        .timeout(const Duration(seconds: 20));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
@@ -90,7 +96,8 @@ class BotService {
       return 'I\'m doing great, thanks for asking! I\'m here to help you improve your English skills. How can I help?';
     } else if (lowerMessage.contains('what is')) {
       return 'That\'s a great question! Could you be more specific about what you\'d like to know?';
-    } else if (lowerMessage.contains('help') || lowerMessage.contains('grammar')) {
+    } else if (lowerMessage.contains('help') ||
+        lowerMessage.contains('grammar')) {
       return 'Of course! I can help you with grammar, vocabulary, pronunciation, and general conversation. What would you like to work on?';
     } else if (lowerMessage.contains('bad') || lowerMessage.contains('wrong')) {
       return 'No worries! Making mistakes is part of the learning process. Let me help you improve! 💪';

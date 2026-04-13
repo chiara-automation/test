@@ -21,7 +21,7 @@ class TtsService {
     await _flutterTts.setLanguage("en-US");
 
     // Set voice parameters
-    await _flutterTts.setSpeechRate(0.5); // Speed of speech (0.0 - 1.0)
+    await _flutterTts.setSpeechRate(0.9); // Speed of speech (0.0 - 1.0)
     await _flutterTts.setVolume(1.0); // Volume (0.0 - 1.0)
     await _flutterTts.setPitch(1.0); // Pitch (0.5 - 2.0)
 

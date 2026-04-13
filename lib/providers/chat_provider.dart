@@ -34,8 +34,16 @@ class ChatProvider extends ChangeNotifier {
   }
 
   String _currentDraft = '';
+
   set currentDraft(String value) {
     _currentDraft = value;
+    notifyListeners();
+  }
+
+  void cancelListening() {
+    _speechService.cancelListening();
+    _isListening = false;
+    _currentDraft = '';
     notifyListeners();
   }
 
@@ -69,6 +77,10 @@ class ChatProvider extends ChangeNotifier {
         });
       }
 
+      // Stop listening and cancel microphone when bot starts responding
+      await stopListening();
+      cancelListening();
+
       // Get bot response using conversation context
       final response =
           await _botService.getBotResponse(text, conversation: conversation);
@@ -80,6 +92,9 @@ class ChatProvider extends ChangeNotifier {
           timestamp: DateTime.now(),
         ),
       );
+
+      // Clear user input after sending
+      _currentDraft = '';
 
       // Auto-play the bot response
       await speak(_messages.length - 1);

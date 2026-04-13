@@ -55,6 +55,9 @@ class SpeechService {
           onResult(_recognizedText);
         },
         localeId: 'en_US',
+        listenFor: const Duration(seconds: 30),
+        pauseFor: const Duration(seconds: 3),
+        partialResults: true,
       );
     } catch (e) {
       print('Error starting listening: $e');
